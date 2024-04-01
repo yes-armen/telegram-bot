@@ -1,55 +1,56 @@
 # bot
 
-В этом задании вам нужно написать телеграм бота используя библиотеку POCO.
-Что именно будет делать этот бот не так важно. В задании будет оцениваться дизайн и
-реализация клиента для общения с серверами телеграма.
+In this task you need to write a telegram bot using the POCO library.
+What exactly this bot will do is not so important. The assignment will evaluate the design and
+implementation of a client for communicating with telegram servers.
 
-В этой задаче вы должны создавать .h и .cpp файлы в директории telegram,
-а также самостоятельно протестировать свой код, заполнив тесты в test/test_api.cpp
+In this task you have to create .h and .cpp files in the telegram directory,
+and also test your code yourself by filling out the tests in test/test_api.cpp
 
-## План
+## Plan
 
- 0. Решите задачу [hello-http](../hello-http).
- 1. Получите токен для работы с API.
- 2. Потрогайте API из консоли, используя утилиту curl.
- 3. Прочитайте документацию на релевантные классы из POCO.
- 4. Установите зависимости, убедитесь что все собирается и работает.
- 5. Продумайте, какие классы понадобится написать. Какой у них будет интерфейс?
- 6. Допишите тесты, работающие с FakeServer.
- 7. Напишите логику бота.
+0. Solve the problem [hello-http](.../hello-http).
+1. Get a token to work with the API.
+2. Access the API from the console using the curl utility.
+3. Read the documentation for the relevant classes from POCO.
+4. Install dependencies, make sure everything builds and works.
+5. Think about what classes you will need to write. What kind of interface will they have?
+6. Add tests that work with FakeServer.
+7. Write the bot logic.
 
-## Знакомство с HTTP-API
+## Introducing the HTTP API
 
-HTTP протокол для общения с серверами описан
-на [этой](https://core.telegram.org/bots/api) странице.
+he HTTP protocol for communicating with servers is described
+on [this]( https://core.telegram.org/bots/api ) page.
 
-Чтобы воспользоваться HTTP-API
-нужно [получить токен](https://core.telegram.org/bots#6-botfather).
+To use the HTTP API
+you need to [get a token]( https://core.telegram.org/bots#6-botfather ).
 
-После того как вы получили токен, нужно проверить что HTTP-API
-работает. Для этого мы будем дёргать методы командой `curl`. Еще нам
-понадобиться утилита `json_pp`.
+After you have received the token, you need to check that the HTTP API
+works. To do this, we will pull the methods with the `curl` command. More for us
+you will need the `json_pp` utility.
 
- * [Метод](https://core.telegram.org/bots/api#getme) `/getMe`
-   возвращает информацию о вашем боте. Его удобно использовать для
-   проверки токена.
+* [Method]( https://core.telegram.org/bots/api#getme ) `/getMe`
+returns information about your bot. It is convenient to use for
+token verification.
+
 
 ```
 ~/C/s/bot (master|…) $ curl https://api.telegram.org/bot<YOUR_TOKEN_HERE>/getMe
 {"ok":true,"result":{"id":384306257,"is_bot":true,"first_name":"shad-cpp-test","username":"shad_shad_test_test_bot"}}
 ```
 
- * [Метод](https://core.telegram.org/bots/api#getting-updates)
-   `/getUpdates` возвращает сообщения направленные вашему боту.
+* [Method]( https://core.telegram.org/bots/api#getting-updates ) `/getUpdates` returns messages sent to your bot.
 
-   - Чтобы этот метод вернул что-то осмысленное, нужно послать
-   сообщение своему боту.
-   - Обратите внимание на параметр `update_id`.
-   - Почему команда возвращает те же самые сообщение при повторном
-     запуске? Как сервера телеграмма понимают, что ваш бот обработал
-     сообщения?
+- For this method to return something meaningful, you need to send
+message to your bot.
+- Pay attention to the update_id parameter.
+- Why does the command return the same message when repeated?
+launch? How telegram servers understand what your bot has processed
+messages?
 
 ```
+
 ~/C/s/bot (master|…) $ curl -s https://api.telegram.org/bot<YOUR_TOKEN_HERE>/getUpdates | json_pp
 {
    "ok" : true,
@@ -112,78 +113,78 @@ curl -s -H "Content-Type: application/json" -X POST -d '{"chat_id": <CHAT_ID_FRO
 }
 ```
 
- * Запустите все три примера с флагом `-v`, чтобы посмотреть на сырые
-   HTTP запросы и ответы.
+* Run all three examples with the -v flag to see raw HTTP requests and responses.
 
-## Требования к вашему Клиенту
+## Requirements for your Client
 
- * Все методы клиента сильно типизированы. `Poco::Json` нигде не торчит из интерфейса.
+ * All client methods are strongly typed. Poco::Json is not exposed in the interface.
 
- * Ошибки HTTP-API транслируются в исключения.
+ * HTTP-API errors are translated into exceptions.
 
- * Клиент сохраняет текущий offset в файл и восстанавливает после перезапуска.
+ * The client saves the current offset to a file and restores it after a restart.
 
- * Клиент ничего не знает про логику вашего конкретного бота.
+ * The client does not know about the logic of your specific bot.
 
- * Константы можно конфигурировать. У всех параметров выставлены
-   разумные значения по умолчанию, так что для использования Клиента нужно
-   предоставить только необходимые параметры.
+ * Constants can be configured. Reasonable default values are set for all parameters, so only the necessary parameters need to be provided to use the Client.
 
-## Что должен делать бот
+## What the bot should do
 
- * Запрос `/random`. Бот посылает случайное число ответом на это сообщение.
+ * Request /random. The bot sends a random number in response to this message.
 
- * Запрос `/weather`. Бот отвечает в чат `Winter Is Coming`.
+ * Request /weather. The bot responds in the chat Winter Is Coming.
 
- * Запрос `/styleguide`. Бот отвечает в чат смешной шуткой на тему code review.
+ * Request /styleguide. The bot responds in the chat with a funny joke on the topic of code review.
 
- * Запрос `/stop`. Процесс бота завершается штатно.
+ * Request /stop. The bot process terminates normally.
 
- * Запрос `/crash`. Процесс бота завершается аварийно. Например выполняет `abort();`.
+ * Request /crash. The bot process terminates abnormally. For example, it executes abort();.
 
-*Пожалуйста*, не добавляйте ботов в общий чат курса, чтобы избежать лишнего спама.
-Чтобы похвастаться своим ботом, можно использовать [специальный канал](https://t.me/joinchat/BjrYSxBxPwTTonfSoku7xQ)
+*Please* do not add bots to the general course chat to avoid unnecessary spam.
+To show off your bot, you can use [a special channel](https://t.me/joinchat/BjrYSxBxPwTTonfSoku7xQ)
 
-### Обработка параметра offset и long poll
+### Handling the offset parameter and long poll
 
-Вам нужно разобраться с тем, как работают параметры `offset` и `timeout` у метода `getUpdates`.
-Во время работы бот должен сохранять своё состояние в файл, так чтобы после остановки или crash-а
-запросы пользователей не обрабатывались по второму разу.
+You need to understand how the offset and timeout parameters work in the getUpdates method.
+During operation, the bot should save its state to a file so that after stopping or crashing, user requests are not processed a second time.
 
-Для того чтобы тестировать эту функциональность используйте запросы `/stop` и `/crash`, а также
-супервизор для бедных:
+To test this functionality, use the /stop and /crash requests, as well as a supervisor for the poor:
 
-```bash
+```
 $ while true; do ./bot; done
 ```
 
-## Полезные классы из библиотеки POCO
+## Useful classes from the POCO library
 
- - `Poco::Net::HTTPClientSession`
- - `Poco::Net::HTTPSClientSession`
- - `Poco::Net::HTTPRequest`
- - `Poco::Net::HTTPResponse`
- - `Poco::URI`
- - `Poco::JSON::Object`
- - `Poco::JSON::Parser`
+ - Poco::Net::HTTPClientSession
+ - Poco::Net::HTTPSClientSession
+ - Poco::Net::HTTPRequest
+ - Poco::Net::HTTPResponse
+ - Poco::URI
+ - Poco::JSON::Object
+ - Poco::JSON::Parser
 
-## Установка зависимостей
+## Installing dependencies
 
- * На **Ubuntu** `sudo apt-get install libpoco-dev`
- * На **MacOS** `brew install poco --build-from-source --cc=gcc-8`
+ * On Ubuntu
 
-## Автоматические тесты
+```
+sudo apt-get install libpoco-dev
+```
 
-Общаться с реальным сервером в тестах - не самая лучшая идея по многим
-причинам. Вместо этого, мы даём вам класс `FakeServer` и просим
-написать функциональные тесты, проверяющие набор сценариев.
+ * On MacOS
+```
+brew install poco --build-from-source --cc=gcc-8
+```
+## Automated tests
 
-`FakeServer` только прикидывается сервером и отвечает на все запросы
-заранее заготовленными ответами.
+Interacting with a real server in tests is not the best idea for many reasons.
+Instead, we provide you with the FakeServer class and ask you to write functional tests that check a set of scenarios.
 
-Ваш код тестов должен выглядеть примерно так:
+FakeServer pretends to be a server and responds to all requests with pre-prepared responses.
 
-```c++
+Your test code should look something like this:
+
+```
 TEST_CASE("Single getMe") {
     FakeServer fake("Single getMe");
     fake.Start();
@@ -194,14 +195,6 @@ TEST_CASE("Single getMe") {
 }
 ```
 
-Всего нужно проверить 4 сценария. Полное описание смотрите в
-[соседнем файле](TESTING_SCENARIOS.md).
+You need to check 4 scenarios in total. See the full description in the adjacent file (TESTING_SCENARIOS.md).
 
-**Тестовый сервер поддерживает только подмножество API. Ваши запросы должны выглядеть ровно так,
-как описано в сценарии.**
-
-# Бонусные баллы
-
- * `+100` Заголовочный файл api не инклюдит хедеры из Poco.
- * `+200` клиент позволяет посылать картинки и стикеры. Бот поддерживает команды `/gif` и `/sticker`
- * `+100` бот пишет осмысленные логи.
+**The test server supports only a subset of the API. Your requests should look exactly as described in the scenario.**
