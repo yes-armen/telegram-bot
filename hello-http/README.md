@@ -1,22 +1,25 @@
 # hello-http
 
-Эта задача была разобрана на семинаре про POCO. Рекомендуется решить ее перед тем как приступать к
-[третьему домашнему заданию](../bot).
+This task was discussed at the POCO seminar. It is recommended to solve it before starting the [third homework assignment](../bot).
 
-Реализуйте функцию `CreateYandexForecaster`, которая возвращает текущую погоду, используя
-[API Яндекс.Погоды](https://tech.yandex.ru/weather/doc/dg/concepts/about-docpage/). Данная функция принимает
-ключ для доступа к API и url, к которому нужно делать запросы (используется в тестах).
+Implement the CreateYandexForecaster function, which returns the current weather using the [Yandex.Weather API](https://tech.yandex.com/weather/doc/dg/concepts/about-docpage/). This function takes an API access key and a URL to make requests to (used in tests).
 
-Интерфейсы приведены в файле `weather.h`, реализуйте все необходимое в `weather.cpp`. Реализация интерфейса `IForecaster`
-позволяет принимать ширину-долготу, которые нужно использовать при совершении запроса. Иначе же не указывайте данные параметры
-в запросе (Я.Погода тогда подставляет значения для Москвы).
+The interfaces are provided in the `weather.h` file, implement everything necessary in weather.cpp. The implementation of the IForecaster interface allows specifying latitude and longitude to use when making a request. Otherwise, do not specify these parameters in the request (Yandex.Weather then substitutes values for Moscow).
 
-Если в результате запроса сервер вернул ошибку, бросьте исключение `YandexAPIError`.
+If the server returns an error in response to the request, throw a YandexAPIError exception.
 
-Для проверки вы можете сделать запрос к API в `main.cpp` (для начала нужно получить ключ для API). Соответствующий бинарник называется
-`hello_http`.
+To test, you can make a request to the API in main.cpp (first you need to obtain an API key). The corresponding binary is called hello_http.
 
-## Установка зависимостей
+## Installing Dependencies
 
- * На **Ubuntu** `sudo apt-get install libpoco-dev`
- * На **MacOS** `brew install poco`. Сборку проекта нужно переключить на системный clang.
+* On Ubuntu
+```
+sudo apt-get install libpoco-dev
+```
+
+* On MacOS
+```
+brew install poco
+```
+
+Switch the project build to the system clang.
